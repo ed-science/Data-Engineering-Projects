@@ -22,14 +22,11 @@ class LoadDimensionOperator(BaseOperator):
 
     def execute(self, context):
         redshift = PostgresHook(postgres_conn_id=self.redshift_conn_id)
-        self.log.info("Loading into {} dimension table".format(self.table_name))
-        self.log.info("Append only mode: {}".format(self.append_only))
-        if self.append_only:
-            sql_stmt = 'INSERT INTO %s %s' % (self.table_name, self.load_sql)
-            redshift.run(sql_stmt)
-        else:
-            sql_del_stmt = 'DELETE FROM %s' % (self.table_name)
+        self.log.info(f"Loading into {self.table_name} dimension table")
+        self.log.info(f"Append only mode: {self.append_only}")
+        if not self.append_only:
+            sql_del_stmt = f'DELETE FROM {self.table_name}'
             redshift.run(sql_del_stmt)
-            sql_stmt = 'INSERT INTO %s %s' % (self.table_name, self.load_sql)
-            redshift.run(sql_stmt)
+        sql_stmt = f'INSERT INTO {self.table_name} {self.load_sql}'
+        redshift.run(sql_stmt)
             

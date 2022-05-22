@@ -29,8 +29,7 @@ def create_iam_role(DWH_IAM_ROLE_NAME):
         iam.attach_role_policy(RoleName=DWH_IAM_ROLE_NAME,
                                PolicyArn="arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
                                )['ResponseMetadata']['HTTPStatusCode']
-        role_arn = iam.get_role(RoleName=DWH_IAM_ROLE_NAME)['Role']['Arn']
-        return role_arn
+        return iam.get_role(RoleName=DWH_IAM_ROLE_NAME)['Role']['Arn']
     except Exception as e:
         print(e)
 

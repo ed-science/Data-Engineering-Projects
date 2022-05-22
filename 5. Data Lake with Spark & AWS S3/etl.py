@@ -63,7 +63,7 @@ def song_schema():
 
 
 def process_song_data(spark, input_data, output_data):
-    """
+                                  """
     Description: Read in songs data from json files.
                  Outputs songs and artists dimension tables in parquet files in S3.
 
@@ -75,29 +75,29 @@ def process_song_data(spark, input_data, output_data):
     Returns:
         None
     """
-    # get filepath to song data file
-    song_data = input_data + 'song_data/*/*/*/*.json'
-    
-    # read song data file
-    df = spark.read.json(song_data, schema=song_schema())
+                                      # get filepath to song data file
+                                  song_data = f'{input_data}song_data/*/*/*/*.json'
 
-    # extract columns to create songs table
-    songs_table = df.select(['song_id', 'title', 'artist_id', 
-                             'year', 'duration']).distinct().where(
-                             col('song_id').isNotNull())
-    
-    # write songs table to parquet files partitioned by year and artist
-    songs_path = output_data + 'songs'
-    songs_table.write.partitionBy('year', 'artist_id').parquet(songs_path)
+                                  # read song data file
+                                  df = spark.read.json(song_data, schema=song_schema())
 
-    # extract columns to create artists table
-    artists_table = df.select(['artist_id', 'artist_name', 'artist_location', 
-                             'artist_latitude', 'artist_longitude']).distinct().where(
-                             col('artist_id').isNotNull())
-    
-    # write artists table to parquet files
-    artists_path = output_data + 'artists'
-    artists_table.write.parquet(artists_path)
+                                  # extract columns to create songs table
+                                  songs_table = df.select(['song_id', 'title', 'artist_id', 
+                                                           'year', 'duration']).distinct().where(
+                                                           col('song_id').isNotNull())
+
+                                      # write songs table to parquet files partitioned by year and artist
+                                  songs_path = f'{output_data}songs'
+                                  songs_table.write.partitionBy('year', 'artist_id').parquet(songs_path)
+
+                                  # extract columns to create artists table
+                                  artists_table = df.select(['artist_id', 'artist_name', 'artist_location', 
+                                                           'artist_latitude', 'artist_longitude']).distinct().where(
+                                                           col('artist_id').isNotNull())
+
+                                      # write artists table to parquet files
+                                  artists_path = f'{output_data}artists'
+                                  artists_table.write.parquet(artists_path)
 
 
 def process_log_data(spark, input_data, output_data):

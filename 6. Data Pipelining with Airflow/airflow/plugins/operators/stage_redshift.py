@@ -39,11 +39,11 @@ class StageToRedshiftOperator(BaseOperator):
         credentials = aws_hook.get_credentials()
         redshift = PostgresHook(postgres_conn_id=self.redshift_conn_id)
         self.log.info("Clearing data from destination Redshift table")
-        redshift.run("DELETE FROM {}".format(self.table))
+        redshift.run(f"DELETE FROM {self.table}")
         self.log.info("Copying data from S3 to Redshift")
-        s3_path = "s3://{}/{}".format(self.s3_bucket, self.s3_key)
+        s3_path = f"s3://{self.s3_bucket}/{self.s3_key}"
         if self.jsonpath != "auto":
-            jsonpath = "s3://{}/{}".format(self.s3_bucket, self.jsonpath)
+            jsonpath = f"s3://{self.s3_bucket}/{self.jsonpath}"
         else:
             jsonpath = self.jsonpath
         formatted_sql = StageToRedshiftOperator.copy_sql.format(
